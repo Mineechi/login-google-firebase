@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:p/spreadsheet.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   ); // Inisialisasi Firebase
 
-  runApp(LoginApp());
+  runApp(const LoginApp());
 }
 
 class LoginApp extends StatelessWidget {
+  const LoginApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,27 +24,14 @@ class LoginApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  // Halaman homepage setelah login berhasil
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      body: Center(
-        child: Text('Selamat datang di halaman utama!'),
-      ),
+      home: const LoginPage(),
     );
   }
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -69,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       if (user != null) {
         // Navigasi ke halaman utama setelah login berhasil
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => Spread()),
         );
       } else {
         // Tampilkan pesan error jika login gagal
@@ -83,11 +73,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Page'),
+        title: const Text('Login Page'),
       ),
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -96,19 +86,19 @@ class _LoginPageState extends State<LoginPage> {
               //   width: 150.0,
               //   height: 150.0,
               // ),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               ElevatedButton(
                 onPressed: () async {
                   await _handleSignIn();
                 },
-                child: Text('Login dengan Google'),
+                child: const Text('Login dengan Google'),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               TextButton(
                 onPressed: () {
                   // Tambahkan navigasi ke halaman pendaftaran
                 },
-                child: Text('Belum punya akun? Daftar di sini'),
+                child: const Text('Belum punya akun? Daftar di sini'),
               ),
             ],
           ),
