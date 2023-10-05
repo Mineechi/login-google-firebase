@@ -10,7 +10,7 @@ class Spread extends StatefulWidget {
 }
 
 class _SpreadState extends State<Spread> {
-  List<String> spreadsheetData = [];
+  List<List<String>> spreadsheetData = [];
   bool isLoading = true;
 
   @override
@@ -31,49 +31,68 @@ class _SpreadState extends State<Spread> {
           final values = data['values'];
           setState(() {
             spreadsheetData = values
-                .map<String>((row) => (row as List<dynamic>).join(', '))
+                .map<List<String>>((row) => (row as List<dynamic>).map((cell) => cell.toString()).toList())
                 .toList();
             isLoading = false;
           });
         }
       } else {
-        // Handle kesalahan jika terjadi
+        // Handle error if it occurs
         print('Error: ${response.statusCode}');
         setState(() {
           isLoading = false;
         });
       }
     } catch (error) {
-      // Tangani kesalahan jika ada
+      // Handle error if any
       print('Error: $error');
       setState(() {
         isLoading = false;
       });
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Data dari Spreadsheet'),
-        ),
-        body: Center(
-          child: isLoading
-              ? const CircularProgressIndicator()
-              : spreadsheetData.isEmpty
-                  ? const Text('Tidak ada data yang ditemukan.')
-                  : ListView.builder(
-                      itemCount: spreadsheetData.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(spreadsheetData[index]),
-                        );
-                      },
-                    ),
-        ),
+@override
+Widget build(BuildContext context) {
+  return MaterialApp(
+    home: Scaffold(
+      appBar: AppBar(
+        title: const Text('Data dari Spreadsheet'),
       ),
-    );
-  }
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : spreadsheetData.isEmpty
+              ? Center(
+                  child: Text('Tidak ada data yang ditemukan.'),
+                )
+              : Column(
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: List<DataColumn>.generate(
+                          spreadsheetData[0].length,
+                          (index) => DataColumn(
+                            label: Text('Column ${index + 1}'),
+                          ),
+                        ),
+                        rows: spreadsheetData.map((rowData) {
+                          return DataRow(
+                            cells: rowData.map((cellData) {
+                              return DataCell(
+                                Text(cellData),
+                              );
+                            }).toList(),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    // Add other widgets below the table if needed
+                  ],
+                ),
+    ),
+  );
+}
+
 }
